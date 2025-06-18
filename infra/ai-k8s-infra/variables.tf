@@ -70,8 +70,8 @@ variable "gpu_nodes" {
 
   description = "The configuration of the GPU nodes"
   default = {
-    min_capacity     = 1
-    desired_capacity = 1
+    min_capacity     = 0
+    desired_capacity = 0 # not creating gpu instances for now
     max_capacity     = 4 # cuz the mofos at AWS wont increase my quotas!
     instance_types   = ["g4dn.xlarge"]
     node_group_name  = "ai-gpu-nodes"
