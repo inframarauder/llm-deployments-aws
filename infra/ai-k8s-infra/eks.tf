@@ -11,6 +11,23 @@ module "ai_eks_cluster" {
   enable_cluster_creator_admin_permissions = true
   node_iam_role_name                       = "eks-ai-node-role"
 
+  cluster_addons = {
+
+    vpc-cni = {}
+    coredns = {
+      addon_versions              = "v1.12.1-eksbuild.2"
+      resolve_conflicts_on_create = "OVERWRITE"
+      configuration_values = jsonencode({
+        tolerations = [{
+          key      = "node-type"
+          operator = "Equal"
+          value    = "cpu"
+          effect   = "NoSchedule"
+        }]
+      })
+    }
+  }
+
   eks_managed_node_groups = {
     cpu_nodes = {
       min_capacity     = var.cpu_nodes["min_capacity"]
