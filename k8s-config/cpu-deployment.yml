@@ -25,6 +25,10 @@ spec:
             limits:
               memory: "8Gi"
               cpu: "2"
+          lifecycle:
+            postStart:
+              exec:
+                command: ["ollama", "pull", "deepseek-r1:1.5b"]
       tolerations:
         - key: "node-type"
           operator: Equal

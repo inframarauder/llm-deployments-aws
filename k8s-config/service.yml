@@ -5,7 +5,7 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: ollama-cpu-deployment̀̀
+    app: ollama-cpu-deployment
   ports:
     - protocol: TCP
       port: 11434
