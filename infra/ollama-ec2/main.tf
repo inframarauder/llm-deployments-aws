@@ -78,7 +78,7 @@ data "cloudflare_zone" "ollama" {
 resource "cloudflare_record" "ollama" {
   zone_id = data.cloudflare_zone.ollama.zone_id
 
-  type  = "A"
-  name  = "ollama"
-  value = aws_instance.ollama.public_ip
+  type    = "A"
+  name    = "ollama"
+  content = aws_instance.ollama.public_ip
 }
