@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama-api
+
+spec:
+  replicas: 0 # setting this to 0 for now, we'll spin them up later
+  selector:
+    matchLabels:
+      app: ollama-api
+  template:
+    metadata:
+      labels:
+        app: ollama-api
+    spec:
+      containers:
+        - name: ollama-api
+          image: ollama/ollama:latest
+          ports:
+            - containerPort: 11434
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "1"
+            limits:
+              memory: "8Gi"
+              cpu: "2"
+      tolerations:
+        - key: "node-type"
+          operator: Equal
+          value: "gpu"
+          effect: "NoSchedule"

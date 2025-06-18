@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama-cpu-deployment
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ollama-cpu-deployment
+  template:
+    metadata:
+      labels:
+        app: ollama-cpu-deployment
+    spec:
+      containers:
+        - name: ollama-cpu-deployment
+          image: ollama/ollama:latest
+          ports:
+            - containerPort: 11434
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "1"
+            limits:
+              memory: "8Gi"
+              cpu: "2"
+      tolerations:
+        - key: "node-type"
+          operator: Equal
+          value: "cpu"
+          effect: "NoSchedule"
