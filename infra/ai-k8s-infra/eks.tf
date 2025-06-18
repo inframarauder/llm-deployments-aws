@@ -48,3 +48,12 @@ module "ai_eks_cluster" {
     }
   }
 }
+
+# update kubeconfig
+resource "null_resource" "update_kubeconfig" {
+  provisioner "local-exec" {
+    command = "aws eks update-kubeconfig --name ${var.eks_cluster_name} --alias ${var.eks_cluster_name}"
+  }
+
+  depends_on = [module.ai_eks_cluster]
+}
