@@ -39,7 +39,6 @@ resource "helm_release" "aws_lb_controller" {
   chart        = "aws-load-balancer-controller"
   namespace    = "kube-system"
   force_update = true
-  replace      = true
 
   values = [
     yamlencode({
@@ -47,15 +46,8 @@ resource "helm_release" "aws_lb_controller" {
         create = false
         name   = "aws-load-balancer-controller"
       }
-      clusterName = var.eks_cluster_name
-      tolerations = [
-        {
-          key      = "node-type"
-          operator = "Equal"
-          value    = "cpu"
-          effect   = "NoSchedule"
-        }
-      ]
+      clusterName = var.cluster_name
+      tolerations = var.common_tolerations
 
     })
   ]
@@ -73,20 +65,12 @@ resource "helm_release" "external_dns" {
   repository   = "https://charts.bitnami.com/bitnami"
   version      = "8.8.4"
   force_update = true
-  replace      = true
 
   values = [
     yamlencode({
-      tolerations = [
-        {
-          key      = "node-type"
-          operator = "Equal"
-          value    = "cpu"
-          effect   = "NoSchedule"
-        }
-      ]
-      provider = "cloudflare"
-      sources  = ["service", "ingress"]
+      tolerations = var.common_tolerations
+      provider    = "cloudflare"
+      sources     = ["service", "ingress"]
       cloudflare = {
         apiToken = var.cloudflare_api_token
       }

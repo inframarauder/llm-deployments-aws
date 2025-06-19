@@ -1,29 +1,23 @@
-# Create an EKS cluster 
-module "ai_eks_cluster" {
+# Create an EKS cluster with all the necessary add-ons and node groups needed for hosting LLMs
+module "eks_cluster" {
   source = "terraform-aws-modules/eks/aws"
 
-  cluster_name                             = var.eks_cluster_name
-  cluster_version                          = var.eks_cluster_version
-  subnet_ids                               = module.ai_vpc.private_subnets # place nodes in private subnets
-  vpc_id                                   = module.ai_vpc.vpc_id
+  cluster_name                             = var.cluster_name
+  cluster_version                          = var.cluster_version
+  subnet_ids                               = module.vpc.private_subnets # place nodes in private subnets
+  vpc_id                                   = module.vpc.vpc_id
   cluster_endpoint_public_access           = true
   enable_irsa                              = true
   enable_cluster_creator_admin_permissions = true
-  node_iam_role_name                       = "eks-ai-node-role"
+  node_iam_role_name                       = "llm-cluster-node-role"
 
   cluster_addons = {
 
     vpc-cni = {}
     coredns = {
-      addon_versions              = "v1.12.1-eksbuild.2"
       resolve_conflicts_on_create = "OVERWRITE"
       configuration_values = jsonencode({
-        tolerations = [{
-          key      = "node-type"
-          operator = "Equal"
-          value    = "cpu"
-          effect   = "NoSchedule"
-        }]
+        tolerations = var.common_tolerations
       })
     }
   }
@@ -34,10 +28,10 @@ module "ai_eks_cluster" {
       desired_capacity = var.cpu_nodes["desired_capacity"]
       max_capacity     = var.cpu_nodes["max_capacity"]
       instance_types   = var.cpu_nodes["instance_types"]
-      node_group_name  = var.cpu_nodes["node_group_name"]
 
+      node_group_name = "llm-eks-cpu-node-group"
       taints = [{
-        key    = "node-type"
+        key    = "kubernetes.io/node-type"
         value  = "cpu"
         effect = "NO_SCHEDULE"
       }]
@@ -56,7 +50,7 @@ module "ai_eks_cluster" {
 # update kubeconfig
 resource "null_resource" "update_kubeconfig" {
   provisioner "local-exec" {
-    command = "aws eks update-kubeconfig --name ${var.eks_cluster_name} --alias ${var.eks_cluster_name}"
+    command = "aws eks update-kubeconfig --name ${var.cluster_name} --alias ${var.cluster_name}"
   }
 
   depends_on = [module.ai_eks_cluster]
