@@ -4,7 +4,8 @@ data "aws_availability_zones" "azs" {
 }
 # create a VPC with public, private subnets for AI workloads
 module "ai_vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.20.0"
 
   name                 = var.vpc_name
   cidr                 = var.vpc_cidr
