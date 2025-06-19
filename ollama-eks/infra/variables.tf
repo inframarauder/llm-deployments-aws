@@ -59,24 +59,6 @@ variable "cpu_nodes" {
   }
 }
 
-variable "gpu_nodes" {
-  type = object({
-    min_capacity     = number
-    desired_capacity = number
-    max_capacity     = number
-    instance_types   = list(string)
-    node_group_name  = string
-  })
-
-  description = "The configuration of the GPU nodes"
-  default = {
-    min_capacity     = 0
-    desired_capacity = 0 # not creating gpu instances for now
-    max_capacity     = 4 # cuz the mofos at AWS wont increase my quotas!
-    instance_types   = ["g4dn.xlarge"]
-    node_group_name  = "ai-gpu-nodes"
-  }
-}
 
 variable "cloudflare_api_token" {
   type        = string
