@@ -77,3 +77,9 @@ variable "gpu_nodes" {
     node_group_name  = "ai-gpu-nodes"
   }
 }
+
+variable "cloudflare_api_token" {
+  type        = string
+  description = "The CloudFlare API Key - read from terraform.tfvars"
+
+}

@@ -6,15 +6,18 @@ metadata:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-south-1:302087542857:certificate/5ebaae12-61d2-4aae-b807-6b698f4fa7fd
-  spec:
-    rules:
-      - host: ollama.inframarauder.dev
-        http:
-          paths:
-            - path: /
-              pathType: Prefix
-              backend:
-                service:
-                  name: ollama-cpu-service
-                  port:
-                    number: 80
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+    external-dns.alpha.kubernetes.io/hostname: ollama.inframarauder.dev
+spec:
+  rules:
+    - host: ollama.inframarauder.dev
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: ollama-cpu-service
+                port:
+                  number: 11434

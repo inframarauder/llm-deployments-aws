@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: ollama-cpu-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: ollama-cpu-deployment
   ports:

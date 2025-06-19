@@ -130,6 +130,7 @@ resource "helm_release" "aws_lb_controller" {
           effect   = "NoSchedule"
         }
       ]
+
     })
   ]
 
@@ -139,14 +140,13 @@ resource "helm_release" "aws_lb_controller" {
   ]
 }
 
-
-
-# setup external dns via helm chart
 resource "helm_release" "external_dns" {
-  name       = "external-dns"
-  chart      = "external-dns"
-  repository = "https://kubernetes-sigs.github.io/external-dns/"
-  version    = "1.16.1"
+  name         = "external-dns"
+  chart        = "external-dns"
+  repository   = "https://charts.bitnami.com/bitnami"
+  version      = "8.8.4"
+  force_update = true
+  replace      = true
 
   values = [
     yamlencode({
@@ -158,8 +158,16 @@ resource "helm_release" "external_dns" {
           effect   = "NoSchedule"
         }
       ]
+      provider = "cloudflare"
+      sources  = ["service", "ingress"]
+      cloudflare = {
+        apiToken = var.cloudflare_api_token
+      }
     })
   ]
 
-  depends_on = [module.ai_eks_cluster, helm_release.aws_lb_controller]
+  depends_on = [
+    module.ai_eks_cluster,
+    helm_release.aws_lb_controller,
+  ]
 }
