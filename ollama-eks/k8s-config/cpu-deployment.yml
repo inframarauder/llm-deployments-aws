@@ -18,6 +18,9 @@ spec:
           image: ollama/ollama:latest
           ports:
             - containerPort: 11434
+          env:
+            - name: OLLAMA_DEBUG
+              value: "2"
           resources:
             requests:
               memory: "4Gi"
