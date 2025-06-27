@@ -43,7 +43,7 @@ module "eks_cluster" {
   }
 
   depends_on = [
-    module.ai_vpc
+    module.vpc
   ]
 }
 
@@ -53,5 +53,5 @@ resource "null_resource" "update_kubeconfig" {
     command = "aws eks update-kubeconfig --name ${var.cluster_name} --alias ${var.cluster_name}"
   }
 
-  depends_on = [module.ai_eks_cluster]
+  depends_on = [module.eks_cluster]
 }
