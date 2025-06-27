@@ -43,7 +43,12 @@ variable "node_iam_role_name" {
   description = "Name of the IAM role for the nodes"
 }
 variable "common_tolerations" {
-  type        = list(object)
+  type = list(object({
+    key      = string
+    operator = string
+    value    = string
+    effect   = string
+  }))
   description = "A list of tolerations to apply to all pods"
   default     = []
 }

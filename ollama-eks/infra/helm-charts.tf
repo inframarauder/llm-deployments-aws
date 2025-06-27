@@ -11,7 +11,7 @@ module "aws_lb_controller_ingress_role" {
 
   oidc_providers = {
     main = {
-      provider_arn               = module.ai_eks_cluster.oidc_provider_arn
+      provider_arn               = module.eks_cluster.oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
     }
   }
@@ -53,7 +53,7 @@ resource "helm_release" "aws_lb_controller" {
   ]
 
   depends_on = [
-    module.ai_eks_cluster,
+    module.eks_cluster,
     kubernetes_service_account.aws_lb_controller_sa
   ]
 }
@@ -78,7 +78,20 @@ resource "helm_release" "external_dns" {
   ]
 
   depends_on = [
-    module.ai_eks_cluster,
+    module.eks_cluster,
     helm_release.aws_lb_controller,
+  ]
+}
+
+# install kube-prometheus-stack helm chart - needed for observability
+resource "helm_release" "kube_prometheus_stack" {
+  chart      = "kube-prometheus-stack"
+  name       = "kube-prometheus-stack"
+  repository = "https://prometheus-community.github.io/helm-charts"
+
+  values = [
+    yamlencode({
+      tolerations = var.common_tolerations
+    })
   ]
 }
