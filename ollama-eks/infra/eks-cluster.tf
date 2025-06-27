@@ -31,7 +31,7 @@ module "eks_cluster" {
 
       node_group_name = "llm-eks-cpu-node-group"
       taints = [{
-        key    = "kubernetes.io/node-type"
+        key    = "node-type"
         value  = "cpu"
         effect = "NO_SCHEDULE"
       }]
